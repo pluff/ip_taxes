@@ -27,11 +27,11 @@ tax_calculator = TaxCalculator.new(remittances, exchanges)
 
 puts "Налоговые базы по поступлениям:"
 tax_calculator.remittances_taxes.each do |r|
-  puts "     %10.2f BYN --- #{r[:object].transferred_at} #{r[:object].amount} #{r[:object].currency}" % r[:tax_base]
+  puts "     %10.2f BYN --- #{r[:object].transferred_at} #{r[:object].amount.round(2)} #{r[:object].currency}" % r[:tax_base]
 end
 puts "Налоговые базы по продаже валюты: "
 tax_calculator.exchanges_taxes.each do |e|
-  puts "     %10.2f BYN --- #{e[:object].transferred_at} #{e[:object].amount} #{e[:object].from_currency} (#{e[:object].exchange_rate} - #{e[:official_rate]})" % e[:tax_base]
+  puts "     %10.2f BYN --- #{e[:object].transferred_at} #{e[:object].amount.round(2)} #{e[:object].from_currency} (#{e[:object].exchange_rate} - #{e[:official_rate]})" % e[:tax_base]
 end
 
 puts "Итоговая налоговая база: %.2f BYN" % tax_calculator.tax_base
