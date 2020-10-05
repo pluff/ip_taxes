@@ -38,7 +38,7 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    rack (2.0.6)
+    rack (2.2.3)
     savon (2.12.0)
       akami (~> 1.2)
       builder (>= 2.1.2)
