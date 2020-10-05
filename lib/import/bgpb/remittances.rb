@@ -11,7 +11,7 @@ module Import
         private
 
         def find_remittances(docs)
-          docs.select { |doc| doc['CreQ'] > 0 }
+          docs.select { |doc| doc['CreQ'] && doc['CreQ'] > 0 }
         end
 
         def build(rhash)

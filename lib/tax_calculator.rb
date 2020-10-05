@@ -1,15 +1,24 @@
 require 'lib/official_rates'
 
 class TaxCalculator
-  attr_reader :remittances, :exchanges
+  attr_reader :remittances, :exchanges, :prev_tax_base
 
-  def initialize(remittances, exchanges)
+  def initialize(remittances, exchanges, prev_tax_base: 0)
     @remittances = remittances
     @exchanges = exchanges
+    @prev_tax_base = prev_tax_base
   end
 
   def tax_base
     entries.map { |e| e[:tax_base] }.sum
+  end
+
+  def total_tax_base
+    prev_tax_base + tax_base
+  end
+
+  def total_tax_amount
+    tax_amount + prev_tax_base * tax_rate
   end
 
   def remittances_taxes

@@ -8,8 +8,10 @@ $LOAD_PATH.unshift(File.expand_path('./'))
 
 require 'lib/config'
 
-Config.remittances_path = ENV.fetch('REMITTANCES_PATH', 'tmp/usd.txt')
-Config.exchanges_path = ENV.fetch('EXCHANGES_PATH', 'tmp/byn.txt')
+combined_report_path = ENV.fetch('REPORT_PATH', 'tmp/bgpb_report.txt')
+
+Config.remittances_path = ENV.fetch('REMITTANCES_PATH', combined_report_path)
+Config.exchanges_path = ENV.fetch('EXCHANGES_PATH', combined_report_path)
 Config.currency = ENV.fetch('CURRENCY', 'USD')
 Config.tax_rate = ENV.fetch('TAX_RATE', '0.03').to_f
 
@@ -22,7 +24,7 @@ require 'lib/tax_calculator'
 remittances = Import::Bgpb::Remittances.build_from(Pathname.new(Config.remittances_path))
 exchanges = Import::Bgpb::Exchanges.build_from(Pathname.new(Config.exchanges_path))
 
-tax_calculator = TaxCalculator.new(remittances, exchanges)
+tax_calculator = TaxCalculator.new(remittances, exchanges, prev_tax_base: ENV.fetch('PREV_TAX_BASE', 0).to_f)
 
 
 puts "Налоговые базы по поступлениям:"
@@ -34,6 +36,10 @@ tax_calculator.exchanges_taxes.each do |e|
   puts "     %10.2f BYN --- #{e[:object].transferred_at} #{e[:object].amount.round(2)} #{e[:object].from_currency} (#{e[:object].exchange_rate} - #{e[:official_rate]})" % e[:tax_base]
 end
 
-puts "Итоговая налоговая база: %.2f BYN" % tax_calculator.tax_base
+puts "Налоговая база за текущий период: %.2f BYN" % tax_calculator.tax_base
 puts "Налоговая ставка: %5.2f%%" % (tax_calculator.tax_rate * 100)
+puts "="*30
 puts "Налога к уплате: %.2f BYN" % tax_calculator.tax_amount
+puts "="*30
+puts "Итоговая налоговая база: %.2f BYN" % tax_calculator.total_tax_base
+puts "Накопленного налога: %.2f BYN" % tax_calculator.total_tax_amount

@@ -11,7 +11,7 @@ module Import
         private
 
         def find_exchanges(docs)
-          docs.select { |doc| doc['Credit'] > 0 }
+          docs.select { |doc| doc['Credit'] && doc['Credit'] > 0 }
         end
 
         def build(hash)
